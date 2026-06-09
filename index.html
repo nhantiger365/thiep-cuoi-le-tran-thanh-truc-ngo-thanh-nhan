@@ -776,15 +776,6 @@
     }
 
     /* ── MUSIC PLAYER ── */
-    #yt-player {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      pointer-events: none;
-      z-index: -9999;
-    }
-
     #music-btn {
       position: fixed;
       bottom: 24px;
@@ -860,9 +851,10 @@
   <!-- CANVAS FOR PETALS -->
   <canvas id="petals-canvas"></canvas>
 
-  <!-- MUSIC PLAYER (ẩn iframe YouTube) -->
-  <iframe id="yt-player" src="about:blank" allow="autoplay"
-    style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; z-index: -9999;" tabindex="-1"></iframe>
+  <!-- MUSIC PLAYER (HTML5 Audio phát file mp3) -->
+  <audio id="wedding-audio" loop>
+    <source src="nhac_cuoi.mp3" type="audio/mpeg">
+  </audio>
 
   <!-- Nút nhạc nổi -->
   <button id="music-btn" title="Nhạc nền" aria-label="Bật/tắt nhạc">♪</button>
@@ -904,7 +896,7 @@
         </div>
       </div>
 
-      <p class="announce reveal">Trân trọng báo tin Lễ Vu Quy<br>của chúng tôi</p>
+      <p class="announce reveal">Trân trọng báo tin Lễ Vu Quy<br>của con chúng tôi</p>
 
       <!-- Tên cô dâu chú rể -->
       <div class="names-block reveal">
@@ -923,7 +915,7 @@
       <!-- Hôn lễ -->
       <div class="wedding-date-block reveal">
         <p class="event-label">Hôn lễ được cử hành tại tư gia</p>
-        <div class="date-big">18 · 07 · 2026</div>
+        <div class="date-big">19 · 07 · 2026</div>
         <div class="lunar">Nhằm ngày 06 tháng 06 năm Bính Ngọ</div>
         <div class="time-tag">Vào lúc 08 : 00</div>
       </div>
@@ -953,7 +945,7 @@
     <!-- RECEPTION DETAILS -->
     <section class="reception-section">
       <div class="reception-card reveal">
-        <p class="rec-label">Tiệc cưới</p>
+        <p class="rec-label">Tiệc Vu Quy</p>
         <div class="day-weekday">Thứ Bảy</div>
         <div class="day-big">18 · 07 · 2026</div>
         <div class="day-lunar">Nhằm ngày 05 tháng 06 năm Bính Ngọ</div>
@@ -1001,60 +993,18 @@
     /* ── MUSIC PLAYER ── */
     const musicBtn = document.getElementById('music-btn');
     const musicTooltip = document.getElementById('music-tooltip');
+    const weddingAudio = document.getElementById('wedding-audio');
     let musicOn = false;
-    let player;
-    let apiReady = false;
-    let pendingPlay = false;
-
-    // Tải YouTube Iframe Player API
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    // Hàm callback khi API đã sẵn sàng
-    window.onYouTubeIframeAPIReady = function () {
-      player = new YT.Player('yt-player', {
-        height: '1',
-        width: '1',
-        videoId: 'E-cMdqI4ZTc',
-        playerVars: {
-          'playsinline': 1,
-          'controls': 0,
-          'disablekb': 1,
-          'fs': 0,
-          'rel': 0,
-          'start': 0
-        },
-        events: {
-          'onReady': onPlayerReady
-        }
-      });
-    };
-
-    function onPlayerReady(event) {
-      apiReady = true;
-      if (pendingPlay) {
-        startMusic();
-        pendingPlay = false;
-      }
-    }
 
     function startMusic() {
-      if (!apiReady) {
-        pendingPlay = true;
-        return;
-      }
-      player.playVideo();
+      weddingAudio.play().catch(err => console.log("Playback blocked:", err));
       musicOn = true;
       musicBtn.textContent = '♫';
       musicBtn.classList.remove('paused');
     }
 
     function stopMusic() {
-      if (apiReady) {
-        player.pauseVideo();
-      }
+      weddingAudio.pause();
       musicOn = false;
       musicBtn.textContent = '♪';
       musicBtn.classList.add('paused');
